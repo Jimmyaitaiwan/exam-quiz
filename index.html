@@ -1,0 +1,795 @@
+<title>職安衛練習題</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f6f8;
+    --surface: #ffffff;
+    --surface-2: #eceff3;
+    --text: #1b1f27;
+    --muted: #59626f;
+    --border: #e0e4ea;
+    --accent: #3b5bdb;
+    --accent-ink: #ffffff;
+    --good: #2f9e44;
+    --good-bg: #e6f4ea;
+    --good-ink: #1b5e2a;
+    --bad: #e03131;
+    --bad-bg: #fdeceb;
+    --bad-ink: #8f2020;
+    --warn: #d9770a;
+    --warn-bg: #fdf1e0;
+    --radius: 12px;
+    --shadow: 0 1px 2px rgba(20, 26, 40, .06), 0 8px 24px rgba(20, 26, 40, .06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11141a;
+      --surface: #1a1e26;
+      --surface-2: #232833;
+      --text: #e7eaf0;
+      --muted: #98a2b1;
+      --border: #2b313c;
+      --accent: #6a8bff;
+      --accent-ink: #0a0c11;
+      --good: #55c96a;
+      --good-bg: #16301e;
+      --good-ink: #a8e6b4;
+      --bad: #ff6b6b;
+      --bad-bg: #331a1a;
+      --bad-ink: #ffc3c3;
+      --warn: #f0a94c;
+      --warn-bg: #322512;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 8px 24px rgba(0, 0, 0, .3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11141a;
+    --surface: #1a1e26;
+    --surface-2: #232833;
+    --text: #e7eaf0;
+    --muted: #98a2b1;
+    --border: #2b313c;
+    --accent: #6a8bff;
+    --accent-ink: #0a0c11;
+    --good: #55c96a;
+    --good-bg: #16301e;
+    --good-ink: #a8e6b4;
+    --bad: #ff6b6b;
+    --bad-bg: #331a1a;
+    --bad-ink: #ffc3c3;
+    --warn: #f0a94c;
+    --warn-bg: #322512;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 8px 24px rgba(0, 0, 0, .3);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Hiragino Sans", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 600px;
+    padding: 18px 16px 96px;
+  }
+
+  h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -.01em; margin: 0 0 4px; text-wrap: balance; }
+  h2 { font-size: 1.05rem; font-weight: 700; margin: 0 0 12px; }
+  p { margin: 0; }
+  .muted { color: var(--muted); font-size: .875rem; }
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  .stack { display: flex; flex-direction: column; gap: 14px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px;
+  }
+  .card.flat { box-shadow: none; }
+  .card.accent { border-color: var(--accent); }
+
+  .btn {
+    -webkit-appearance: none; appearance: none;
+    font: inherit;
+    width: 100%;
+    min-height: 48px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface-2);
+    color: var(--text);
+    cursor: pointer;
+    text-align: center;
+    transition: border-color .15s, background .15s, transform .05s;
+  }
+  .btn:hover { border-color: var(--muted); }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 500; }
+  .btn.primary:hover { filter: brightness(1.05); border-color: var(--accent); }
+  .btn.ghost { background: transparent; }
+  .btn.sm { min-height: 40px; padding: 8px 12px; font-size: .9rem; }
+  .btn[disabled] { opacity: .55; cursor: default; }
+  .btn-row { display: flex; gap: 8px; }
+  .btn-row .btn { width: auto; flex: 1; }
+
+  .pbar { height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+  .pbar > i { display: block; height: 100%; background: var(--accent); transition: width .3s ease; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 5;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0 12px;
+    background: var(--bg);
+  }
+  .topbar .grow { flex: 1; }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat { background: var(--surface-2); border-radius: 10px; padding: 12px 8px; text-align: center; }
+  .stat b { display: block; font-size: 1.35rem; font-weight: 700; }
+  .stat span { font-size: .78rem; color: var(--muted); }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 9px; border-radius: 999px;
+    font-size: .76rem; font-weight: 500;
+    background: var(--surface-2); color: var(--muted);
+  }
+  .chip.warn { background: var(--warn-bg); color: var(--warn); }
+  .chip.good { background: var(--good-bg); color: var(--good-ink); }
+  .chip.bad { background: var(--bad-bg); color: var(--bad-ink); }
+
+  .qstem { font-size: 1.12rem; font-weight: 500; line-height: 1.55; margin: 10px 0 16px; text-wrap: pretty; }
+
+  .opts { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    display: flex; align-items: flex-start; gap: 12px;
+    width: 100%; min-height: 52px;
+    padding: 13px 14px;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: var(--surface);
+    color: var(--text); font: inherit; text-align: left; line-height: 1.5;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .opt:hover:not([disabled]) { border-color: var(--accent); }
+  .opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt[disabled] { cursor: default; }
+  .opt .mk {
+    flex: none;
+    width: 26px; height: 26px; border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: .85rem; font-weight: 700;
+    background: var(--surface-2); color: var(--muted);
+  }
+  .opt.correct { border-color: var(--good); background: var(--good-bg); }
+  .opt.correct .mk { background: var(--good); color: #fff; }
+  .opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+  .opt.wrong .mk { background: var(--bad); color: #fff; }
+  .opt.correct .tag { color: var(--good-ink); font-weight: 700; margin-left: auto; }
+  .opt.wrong .tag { color: var(--bad-ink); font-weight: 700; margin-left: auto; }
+
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field + .field { margin-top: 15px; }
+  .field > .lbl { font-weight: 500; font-size: .92rem; }
+  .field .hint { font-size: .8rem; color: var(--muted); }
+  select, input[type="file"] {
+    font: inherit; color: var(--text);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 9px 10px; min-height: 42px; width: 100%;
+  }
+  select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .radios { display: flex; gap: 8px; flex-wrap: wrap; }
+  .radios label {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 12px; border: 1px solid var(--border); border-radius: 999px;
+    font-size: .9rem; cursor: pointer;
+  }
+  .radios input { accent-color: var(--accent); }
+  .radios label:has(input:checked) { border-color: var(--accent); color: var(--accent); font-weight: 500; }
+  .checks {
+    display: flex; flex-direction: column; gap: 4px;
+    max-height: 220px; overflow: auto;
+    border: 1px solid var(--border); border-radius: 8px; padding: 8px;
+  }
+  .checks label { display: flex; align-items: center; gap: 8px; font-size: .9rem; padding: 4px 2px; cursor: pointer; }
+  .checks input { accent-color: var(--accent); }
+  .optrow { display: flex; align-items: center; gap: 8px; font-size: .9rem; cursor: pointer; }
+  .optrow input { accent-color: var(--accent); flex: none; }
+
+  .toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; min-height: 36px;
+    border: 1px solid var(--border); border-radius: 999px;
+    background: var(--surface); color: var(--muted);
+    font: inherit; font-size: .85rem; cursor: pointer;
+  }
+  .toggle[aria-pressed="true"] { background: var(--warn-bg); border-color: var(--warn); color: var(--warn); font-weight: 600; }
+  .toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  details { border-top: 1px solid var(--border); padding-top: 12px; }
+  summary { cursor: pointer; font-weight: 500; font-size: .92rem; }
+  details .body { margin-top: 10px; font-size: .875rem; color: var(--muted); }
+  details code { background: var(--surface-2); padding: 1px 5px; border-radius: 4px; font-size: .85em; }
+
+  .wronglist { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .wrongitem { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: .9rem; }
+  .wrongitem .meta { font-size: .76rem; color: var(--muted); margin-bottom: 3px; }
+
+  .banner {
+    background: var(--warn-bg); color: var(--warn);
+    border: 1px solid var(--warn); border-radius: 8px;
+    padding: 10px 12px; font-size: .85rem; margin-bottom: 14px;
+  }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+    background: var(--text); color: var(--bg);
+    padding: 10px 18px; border-radius: 999px; font-size: .875rem;
+    box-shadow: var(--shadow); z-index: 50;
+    opacity: 0; transition: opacity .2s;
+  }
+  .toast.show { opacity: 1; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  textarea {
+    width: 100%; min-height: 140px; font-family: ui-monospace, Menlo, monospace;
+    font-size: .8rem; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--surface-2); color: var(--text); padding: 10px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<div class="wrap">
+  <div id="app"></div>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+
+<script>
+"use strict";
+const QUESTIONS = [{"id":"common-01-001","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":1,"stem":"對於核計勞工所得有無低於基本（最低）工資，下列何者錯誤？","options":["僅計入在正常工時內之報酬","應計入加班費","不計入休假日出勤加給之工資","不計入競賽獎金"],"answer":2},{"id":"common-01-002","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":2,"stem":"下列何者之工資日數得列入計算平均工資？","options":["請事假期間","職災醫療期間","發生計算事由之當日前6 個月","放無薪假期間"],"answer":3},{"id":"common-01-003","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":3,"stem":"有關「例假」之敘述，下列何者錯誤？","options":["每7 日應有例假1 日","工資照給","天災出勤時，工資加倍及補休","須給假，不必給工資"],"answer":4},{"id":"common-01-004","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":4,"stem":"勞動基準法第84 條之1 規定之工作者，因工作性質特殊，就其工作時間之敘述，下列何者正確？","options":["完全不受限制","無例假與休假","不另給予延時工資","得由勞雇雙方另行約定"],"answer":4},{"id":"common-01-005","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":5,"stem":"依勞動基準法規定，雇主應置備勞工工資清冊並應保存幾年？","options":["1 年","2 年","5 年","10 年"],"answer":3},{"id":"common-01-006","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":6,"stem":"事業單位僱用勞工多少人以上者，應依勞動基準法規定訂立工作規則？","options":["30 人","50 人","100 人","200 人"],"answer":1},{"id":"common-01-007","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":7,"stem":"依勞動基準法規定，雇主延長勞工之工作時間連同正常工作時間，每日不 得超過多少小時？","options":["10 小時","11 小時","12 小時","15 小時"],"answer":3},{"id":"common-01-008","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":8,"stem":"依勞動基準法規定，下列何者屬不定期契約？","options":["臨時性或短期性的工作","季節性的工作","特定性的工作","有繼續性的工作"],"answer":4},{"id":"common-01-009","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":9,"stem":"依職業安全衛生法規定，事業單位勞動場所發生死亡職業災害時，雇主應於多少小時內通報勞動檢查機構？","options":["8 小時","12 小時","24 小時","48 小時"],"answer":1},{"id":"common-01-010","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":10,"stem":"有關事業單位之勞資會議主席，下列何者正確？","options":["由企業工會推派之","由產業工會推派之","由勞資雙方協議推派之","由勞資雙方輪流擔任之"],"answer":4},{"id":"common-01-011","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":11,"stem":"職業安全衛生法所稱有母性健康危害之虞之工作，不包括下列何種工作型態？","options":["長時間站立姿勢作業","人力提舉、搬運及推拉重物","輪班及工作負荷","駕駛運輸車輛"],"answer":4},{"id":"common-01-012","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":12,"stem":"依職業安全衛生法施行細則規定，下列何者非屬特別危害健康之作業？","options":["噪音作業","游離輻射作業","會計作業","粉塵作業"],"answer":3},{"id":"common-01-013","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":13,"stem":"從事於易踏穿材料構築之屋頂修繕作業時，應有何種作業主管在場執行主管業務？","options":["施工架組配","擋土支撐組配","屋頂","模板支撐"],"answer":3},{"id":"common-01-014","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":14,"stem":"有關「工讀生」之敘述，下列何者正確？","options":["工資不得低於基本工資之80 ％","屬短期工作者，加班只能補休","每日正常工作時間得超過8 小時","國定假日出勤，工資加倍發給"],"answer":4},{"id":"common-01-015","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":15,"stem":"勞工工作時手部嚴重受傷，住院醫療期間公司應按下列何者給予職業災害補償？","options":["前6 個月平均工資","前1 年平均工資","原領工資","基本工資"],"answer":3},{"id":"common-01-016","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":16,"stem":"勞工在何種情況下，雇主得不經預告終止勞動契約？","options":["確定被法院判刑6 個月以內並諭知緩刑超過1 年以上者","不服指揮對雇主暴力相向者","經常遲到早退者","非連續曠工但1 個月內累計3 日者"],"answer":2},{"id":"common-01-017","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":17,"stem":"對於吹哨者保護規定，下列何者錯誤？","options":["事業單位不得對勞工申訴人終止勞動契約","勞動檢查機構受理勞工申訴必須保密","為實施勞動檢查，必要時得告知事業單位有關勞工申訴人身分","事業單位不得有不利勞工申訴人之處分"],"answer":3},{"id":"common-01-018","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":18,"stem":"職業安全衛生法所稱有母性健康危害之虞之工作，係指對於具生育能力之女性勞工從事工作，可能會導致的一些影響。下列何者除外？","options":["胚胎發育","妊娠期間之母體健康","哺乳期間之嬰兒健康","經期紊亂"],"answer":4},{"id":"common-01-019","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":19,"stem":"下列何者非屬職業安全衛生法規定之勞工法定義務？","options":["定期接受健康檢查","參加安全衛生教育訓練","實施自動檢查","遵守安全衛生工作守則"],"answer":3},{"id":"common-01-020","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":20,"stem":"下列何者非屬應對在職勞工施行之健康檢查？","options":["一般健康檢查","體格檢查","特殊健康檢查","特定對象及特定項目之檢查"],"answer":2},{"id":"common-01-021","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":21,"stem":"下列何者非為防範有害物食入之方法？","options":["有害物與食物隔離","不在工作場所進食或飲水","常洗手、漱口","穿工作服"],"answer":4},{"id":"common-01-022","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":22,"stem":"原事業單位如有違反職業安全衛生法或有關安全衛生規定，致承攬人所僱勞工發生職業災害時，有關承攬管理責任，下列敘述何者正確？","options":["原事業單位應與承攬人負連帶賠償責任","原事業單位不需負連帶補償責任","承攬廠商應自負職業災害之賠償責任","勞工投保單位即為職業災害之賠償單位"],"answer":1},{"id":"common-01-023","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":23,"stem":"依勞動基準法規定，主管機關或檢查機構於接獲勞工申訴事業單位違反本法及其他勞工法令規定後，應為必要之調查，並於幾日內將處理情形，以書面通知勞工？","options":["14 日","20 日","30 日","60 日"],"answer":4},{"id":"common-01-024","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":24,"stem":"我國中央勞動業務主管機關為下列何者？","options":["內政部","勞工保險局","勞動部","經濟部"],"answer":3},{"id":"common-01-025","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":25,"stem":"對於勞動部公告列入應實施型式驗證之機械、設備或器具，下列何種情形不得免驗證？","options":["依其他法律規定實施驗證者","供國防軍事用途使用者","輸入僅供科技研發之專用機型","輸入僅供收藏使用之限量品"],"answer":4},{"id":"common-01-026","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":26,"stem":"對於墜落危險之預防設施，下列敘述何者較為妥適？","options":["在外牆施工架等高處作業應盡量使用繫腰式安全帶","安全帶應確實配掛在低於足下之堅固點","高度2m 以上之邊緣開口部分處應圍起警示帶","高度2m 以上之開口處應設護欄或安全網"],"answer":4},{"id":"common-01-027","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":27,"stem":"對於感電電流流過人體可能呈現的症狀，下列何者錯誤？","options":["痛覺","強烈痙攣","血壓降低、呼吸急促、精神亢奮","造成組織灼傷"],"answer":3},{"id":"common-01-028","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":28,"stem":"下列何者非屬於容易發生墜落災害的作業場所或設施？","options":["施工架","廚房","屋頂","梯子"],"answer":2},{"id":"common-01-029","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":29,"stem":"下列何者非屬危險物儲存場所應採取之火災爆炸預防措施？","options":["使用工業用電風扇","裝設可燃性氣體偵測裝置","使用防爆電氣設備","標示「嚴禁煙火」"],"answer":1},{"id":"common-01-030","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":30,"stem":"雇主於臨時用電設備加裝漏電斷路器，可減少下列何種災害發生？","options":["墜落","物體倒塌、崩塌","感電","被撞"],"answer":3},{"id":"common-01-031","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":31,"stem":"雇主要求確實管制人員不得進入吊舉物下方，可避免下列何種災害發生？","options":["感電","墜落","物體飛落","缺氧"],"answer":3},{"id":"common-01-032","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":32,"stem":"職業上危害因子所引起的勞工疾病，稱為何種疾病？","options":["職業疾病","法定傳染病","流行性疾病","遺傳性疾病"],"answer":1},{"id":"common-01-033","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":33,"stem":"事業招人承攬時，其承攬人就承攬部分負雇主之責任，原事業單位就職業災害補償部分之責任為何？","options":["視職業災害原因判定是否補償","依工程性質決定責任","依承攬契約決定責任","仍應與承攬人負連帶責任"],"answer":4},{"id":"common-01-034","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":34,"stem":"預防職業病最根本的措施為何？","options":["實施特殊健康檢查","實施作業環境改善","實施定期健康檢查","實施僱用前體格檢查"],"answer":2},{"id":"common-01-035","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":35,"stem":"在地下室作業，當通風換氣充分時，則不易發生一氧化碳中毒、缺氧危害或火災爆炸危險。「通風換氣充分」係指下列何種描述？","options":["風險控制方法","發生機率","危害源","風險"],"answer":1},{"id":"common-01-036","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":36,"stem":"勞工為節省時間，在未斷電情況下清理機臺，易發生危害為何？","options":["捲夾","缺氧","墜落","崩塌"],"answer":1},{"id":"common-01-037","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":37,"stem":"工作場所具有揮發性化學有害物質進入人體，最常見途徑為下列何者？","options":["口腔","呼吸道","皮膚","眼睛"],"answer":2},{"id":"common-01-038","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":38,"stem":"活線作業勞工應佩戴何種防護手套？","options":["棉紗手套","耐熱手套","絕緣手套","防振手套"],"answer":3},{"id":"common-01-039","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":39,"stem":"下列何者非屬電氣災害之種類？","options":["電弧灼傷","電氣火災","靜電危害","雷電閃爍"],"answer":4},{"id":"common-01-040","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":40,"stem":"下列何者非屬於工作場所作業會發生墜落災害的潛在危害因子？","options":["開口未設置護欄","未設置安全之上下設備","未確實配戴耳罩","屋頂開口下方未張掛安全網"],"answer":3},{"id":"common-01-041","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":41,"stem":"在噪音防治之對策中，從下列何者著手最為有效？","options":["偵測儀器","噪音源","傳播途徑","個人防護具"],"answer":2},{"id":"common-01-042","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":42,"stem":"勞工於室外高氣溫作業環境工作，可能對身體產生之熱危害，下列何者非屬熱危害之症狀？","options":["熱衰竭","中暑","熱痙攣","痛風"],"answer":4},{"id":"common-01-043","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":43,"stem":"下列何者是消除職業病發生率之源頭管理對策？","options":["使用個人防護具","健康檢查","改善作業環境","多運動"],"answer":3},{"id":"common-01-044","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":44,"stem":"下列何者非職業病預防之危害因子？","options":["遺傳性疾病","物理性危害","人因工程危害","化學性危害"],"answer":1},{"id":"common-01-045","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":45,"stem":"依職業安全衛生設施規則規定，下列何者非屬使用合梯，應符合之規定？","options":["合梯應具有堅固之構造","合梯材質不得有顯著之損傷、腐蝕等","梯腳與地面之角度應在80 度以上","有安全之防滑梯面"],"answer":3},{"id":"common-01-046","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":46,"stem":"下列何者非屬勞工從事電氣工作安全之規定？","options":["使其使用電工安全帽","穿戴絕緣防護具","停電作業應斷開、檢電、接地及掛牌","穿戴棉質手套絕緣"],"answer":4},{"id":"common-01-047","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":47,"stem":"為防止勞工感電，下列何者錯誤？","options":["使用防水插頭","避免不當延長接線","設備有金屬外殼保護即可免接地","電線架高或加以防護"],"answer":3},{"id":"common-01-048","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":48,"stem":"不當抬舉導致肌肉骨骼傷害或肌肉疲勞之現象，可歸類為下列何者？","options":["感電事件","不當動作","不安全環境","被撞事件"],"answer":2},{"id":"common-01-049","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":49,"stem":"使用鑽孔機時，不應使用下列何護具？","options":["耳塞","防塵口罩","手套","護目鏡"],"answer":3},{"id":"common-01-050","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":50,"stem":"腕道症候群常發生於下列何種作業？","options":["電腦鍵盤作業","潛水作業","堆高機作業","第一種壓力容器作業"],"answer":1},{"id":"common-01-051","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":51,"stem":"對於化學燒傷傷患的一般處理原則，下列何者正確？","options":["立即用大量清水沖洗","傷患必須臥下，而且頭、胸部須高於身體其他部位","於燒傷處塗抹油膏、油脂或發酵粉","使用酸鹼中和"],"answer":1},{"id":"common-01-052","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":52,"stem":"下列何者非屬防止搬運事故之一般原則？","options":["以機械代替人力","以機動車輛搬運","採取適當之搬運方法","儘量增加搬運距離"],"answer":4},{"id":"common-01-053","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":53,"stem":"對於脊柱或頸部受傷患者，下列何者不是適當的處理原則？","options":["不輕易移動傷患","速請醫師","如無合用的器材，需2 人作徒手搬運","向急救中心聯絡"],"answer":3},{"id":"common-01-054","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":54,"stem":"於使用道路作業之工作場所，為防止工作人員遭車輛撞擊危害，所採取防護措施，下列何者錯誤？","options":["設置警告標示","置交通引導人員","管制非工作人員不得進入","各包商之車輛一律停放於工地現場"],"answer":4},{"id":"common-01-055","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":55,"stem":"安全帽承受巨大外力衝擊後，雖外觀良好，應採下列何種處理方式？","options":["廢棄","繼續使用","送修","油漆保護"],"answer":1},{"id":"common-01-056","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":56,"stem":"因舉重而扭腰係由於身體動作不自然姿勢，動作之反彈，引起扭筋、扭腰及形成類似狀態造成職業災害，其災害類型為下列何者？","options":["不當狀態","不當動作","不當方針","不當設備"],"answer":2},{"id":"common-01-057","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":57,"stem":"有關工作場所安全衛生之敘述，下列何者錯誤？","options":["對於勞工從事其身體或衣著有被污染之虞之特殊作業時，應備置該勞工洗眼、洗澡、漱口、更 衣、洗濯等設備","事業單位應備置足夠急救藥品及器材","事業單位應備置足夠的零食自動販賣機","勞工應定期接受健康檢查"],"answer":3},{"id":"common-01-058","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":58,"stem":"在地下室從事油漆粉刷作業，可能呼吸到揮發性有機化合物時，下列措施何者恰當？","options":["用手帕遮擋鼻子","配戴防塵口罩","配戴濾毒罐面具","配戴醫用口罩"],"answer":3},{"id":"common-01-059","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":59,"stem":"安全門或緊急出口平時應維持何狀態？","options":["門可上鎖但不可封死","保持開門狀態以保持逃生路徑暢通","門應關上但不可上鎖","與一般進出門相同，視各樓層規定可開可關"],"answer":3},{"id":"common-01-060","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":60,"stem":"下列何種防護具較能消減噪音對聽力的危害？","options":["棉花球","耳塞","耳罩","碎布球"],"answer":3},{"id":"common-01-061","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":61,"stem":"勞工若面臨長期工作負荷壓力及工作疲勞累積，沒有獲得適當休息及充足睡眠，便可能影響體能及精神狀態，甚而較易促發下列何種疾病？","options":["皮膚癌","腦心血管疾病","多發性神經病變","肺水腫"],"answer":2},{"id":"common-01-062","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":62,"stem":"「勞工腦心血管疾病發病的風險與年齡、吸菸、總膽固醇數值、家族病史、生活型態、心臟方面疾病」之相關性為何？","options":["無","正","負","可正可負"],"answer":2},{"id":"common-01-063","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":63,"stem":"下列何者非屬職場不法侵害類型？","options":["肢體暴力","語言暴力","家庭暴力","性騷擾"],"answer":3},{"id":"common-01-064","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":64,"stem":"職場內部常見之身體或精神不法侵害，不包含下列何者？","options":["脅迫、名譽損毀、侮辱、嚴重辱罵勞工","強求勞工執行業務上明顯不必要或不可能之工作","過度介入勞工私人事宜","使勞工執行與能力、經驗相符的工作"],"answer":4},{"id":"common-01-065","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":65,"stem":"下列何種措施較可避免工作單調重複或負荷過重？","options":["連續夜班","工時過長","排班保有規律性","經常性加班"],"answer":3},{"id":"common-01-066","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":66,"stem":"減輕皮膚燒傷程度之最重要步驟為何？","options":["儘速用清水沖洗","立即刺破水泡","立即在燒傷處塗抹油脂","在燒傷處塗抹麵粉"],"answer":1},{"id":"common-01-067","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":67,"stem":"眼內噴入化學物或其他異物，應立即使用下列何者沖洗眼睛？","options":["牛奶","蘇打水","清水","稀釋的醋"],"answer":3},{"id":"common-01-068","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":68,"stem":"石綿最可能引起下列何種疾病？","options":["白指症","心臟病","間皮細胞瘤","巴金森氏症"],"answer":3},{"id":"common-01-069","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":69,"stem":"作業場所高頻率噪音較易導致下列何種症狀？","options":["失眠","聽力損失","肺部疾病","腕道症候群"],"answer":2},{"id":"common-01-070","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":70,"stem":"廚房設置之排油煙機，為下列何者？","options":["整體換氣裝置","局部排氣裝置","吹吸型換氣裝置","排氣煙囪"],"answer":2},{"id":"common-01-071","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":71,"stem":"下列何者為選用防塵口罩時，最不重要之考量因素？","options":["捕集效率愈高愈好","吸氣阻抗愈低愈好","重量愈輕愈好","視野愈小愈好"],"answer":4},{"id":"common-01-072","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":72,"stem":"若勞工工作性質需與陌生人接觸、工作中需處理不可預期的突發事件或工作場所治安狀況較差，較容易遭遇下列何種危害？","options":["組織內部不法侵害","組織外部不法侵害","多發性神經病變","潛涵症"],"answer":2},{"id":"common-01-073","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":73,"stem":"下列何者不是發生電氣火災的主要原因？","options":["電器接點短路","電氣火花","電纜線置於地上","漏電"],"answer":3},{"id":"common-01-074","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":74,"stem":"依勞工職業災害保險及保護法規定，職業災害保險之保險效力，自何時開始起算，至離職當日停止？","options":["通知當日","到職當日","雇主訂定當日","勞雇雙方合意之日"],"answer":2},{"id":"common-01-075","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":75,"stem":"依勞工職業災害保險及保護法規定，勞工職業災害保險以下列何者為保險人，辦理保險業務？","options":["財團法人職業災害預防及重建中心","勞動部職業安全衛生署","勞動部勞動基金運用局","勞動部勞工保險局"],"answer":4},{"id":"common-01-076","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":76,"stem":"有關「童工」之敘述，下列何者正確？","options":["每日工作時間不得超過8 小時","不得於午後8 時至翌晨8 時之時間內工作","例假日得在監視下工作","工資不得低於基本工資之70％"],"answer":1},{"id":"common-01-077","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":77,"stem":"依勞動檢查法施行細則規定，事業單位如不服勞動檢查結果，應於勞動檢查結果通知書送達之次日起10 日內，以書面敘明理由向勞動檢查機構提出？","options":["申訴","陳情","抗議","異議"],"answer":4},{"id":"common-01-078","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":78,"stem":"工作者若因雇主違反職業安全衛生法規定而發生職業災害、疑似罹患職業病或身體、精神遭受不法侵害所提起之訴訟，得向勞動部委託之民間團體提出下列何者？","options":["災害理賠","申請扶助","精神補償","國家賠償"],"answer":2},{"id":"common-01-079","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":79,"stem":"計算平日加班費須按平日每小時工資額加給計算，下列何者錯誤？","options":["前2 小時至少加給1/3 倍","超過2 小時部分至少加給2/3 倍","經勞資協商同意後，一律加給0.5 倍","未經雇主同意給加班費者，一律補休"],"answer":4},{"id":"common-01-080","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":80,"stem":"下列工作場所何者非屬勞動檢查法所定之危險性工作場所？","options":["農藥製造","金屬表面處理","火藥類製造","從事石油裂解之石化工業之工作場所"],"answer":2},{"id":"common-01-081","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":81,"stem":"依職業安全衛生設施規則規定，有關電氣安全，下列何者錯誤？","options":["110 伏特之電壓不致造成人員死亡","電氣室應禁止非工作人員進入","不可以濕手操作電氣開關，且切斷開關應迅速","220 伏特為低壓電"],"answer":1},{"id":"common-01-082","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":82,"stem":"依職業安全衛生設施規則規定，下列何者非屬於車輛系營建機械？","options":["平土機","堆高機","推土機","鏟土機"],"answer":2},{"id":"common-01-083","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":83,"stem":"下列何者非為事業單位勞動場所發生職業災害者，雇主應於8 小時內通報勞動檢查機構？","options":["發生死亡災害","勞工受傷無須住院治療","發生災害之罹災人數在3 人以上","發生災害之罹災人數在1 人以上，且需住院治療"],"answer":2},{"id":"common-01-084","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":84,"stem":"依職業安全衛生管理辦法規定，下列何者非屬「自動檢查」之內容？","options":["機械之定期檢查","機械、設備之重點檢查","機械、設備之作業檢點","勞工健康檢查"],"answer":4},{"id":"common-01-085","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":85,"stem":"下列何者係針對於機械操作點的捲夾危害特性可以採用之防護裝置？","options":["設置護圍、護罩","穿戴棉紗手套","穿戴防護衣","強化教育訓練"],"answer":1},{"id":"common-01-086","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":86,"stem":"下列何者非屬從事起重吊掛作業導致物體飛落災害之可能原因？","options":["吊鉤未設防滑舌片致吊掛鋼索鬆脫","鋼索斷裂","超過額定荷重作業","過捲揚警報裝置過度靈敏"],"answer":4},{"id":"common-01-087","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":87,"stem":"勞工不遵守安全衛生工作守則規定，屬於下列何者？","options":["不安全設備","不安全行為","不安全環境","管理缺陷"],"answer":2},{"id":"common-01-088","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":88,"stem":"下列何者不屬於局限空間內作業場所應採取之缺氧、中毒等危害預防措施？","options":["實施通風換氣","進入作業許可程序","使用柴油內燃機發電提供照明","測定氧氣、危險物、有害物濃度"],"answer":3},{"id":"common-01-089","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":89,"stem":"下列何者非通風換氣之目的？","options":["防止游離輻射","防止火災爆炸","稀釋空氣中有害物","補充新鮮空氣"],"answer":1},{"id":"common-01-090","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":90,"stem":"已在職之勞工，首次從事特別危害健康作業，應實施下列何種檢查？","options":["一般體格檢查","特殊體格檢查","一般體格檢查及特殊健康檢查","特殊健康檢查"],"answer":4},{"id":"common-01-091","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":91,"stem":"依職業安全衛生設施規則規定，噪音超過多少分貝之工作場所，應標示並公告噪音危害之預防事項，使勞工周知？","options":["75 分貝","80 分貝","85 分貝","90 分貝"],"answer":4},{"id":"common-01-092","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":92,"stem":"下列何者非屬工作安全分析的目的？","options":["發現並杜絕工作危害","確立工作安全所需工具與設備","懲罰犯錯的員工","作為員工在職訓練的參考"],"answer":3},{"id":"common-01-093","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":93,"stem":"可能對勞工之心理或精神狀況造成負面影響的狀態，如異常工作壓力、超時工作、語言脅迫或恐嚇等，可歸屬於下列何者管理不當？","options":["職業安全","職業衛生","勞工健康","環保"],"answer":3},{"id":"common-01-094","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":94,"stem":"有關女性工作者妊娠期間宜避免作業之敘述，下列何者錯誤？","options":["避免砷或鉛之暴露","避免每班站立7 小時以上之作業","避免提舉1 公斤重物之職務","避免重體力勞動之職務"],"answer":3},{"id":"common-01-095","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":95,"stem":"熱中暑時，易發生下列何現象？","options":["體溫下降","體溫正常","體溫上升","體溫忽高忽低"],"answer":3},{"id":"common-01-096","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":96,"stem":"下列何者不會使電路發生過電流？","options":["電氣設備過載","電路短路","電路漏電","電路斷路"],"answer":4},{"id":"common-01-097","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":97,"stem":"下列何者較屬安全、尊嚴的職場組織文化？","options":["不斷責備勞工","公開在眾人面前長時間責罵勞工","強求勞工執行業務上明顯不必要或不可能之工作","不介入勞工私人事宜"],"answer":4},{"id":"common-01-098","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":98,"stem":"下列何者與職場母性健康保護較不相關？","options":["職業安全衛生法","妊娠與分娩後女性及未滿十八歲勞工禁止從事危險性或有害性工作認定標準","性別平等工作法","動力堆高機型式驗證"],"answer":4},{"id":"common-01-099","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":99,"stem":"油漆塗裝工程應注意防火防爆事項，下列何者錯誤？","options":["確實通風","注意電氣火花","緊密門窗以減少溶劑擴散揮發","嚴禁煙火"],"answer":3},{"id":"common-01-100","subject":"共通科目","subjectCode":"common","section":"工作項目01 職業安全衛生","sectionNum":1,"num":100,"stem":"依職業安全衛生設施規則規定，雇主對於物料儲存，為防止氣候變化或自然發火發生危險者，下列何者為最佳之採取措施？","options":["保持自然通風","密閉","與外界隔離及溫濕控制","靜置於倉儲區，避免陽光直射"],"answer":3}];
+
+/* ---------- 基本索引 ---------- */
+const BANK = new Map(QUESTIONS.map(q => [q.id, q]));
+const MK = ["一", "二", "三", "四"];
+const KEY = "exam-quiz.v1";
+
+const SECTIONS = (() => {
+  const m = new Map();
+  for (const q of QUESTIONS) {
+    if (!m.has(q.section)) {
+      m.set(q.section, { key: q.section, subject: q.subject, subjectCode: q.subjectCode, sectionNum: q.sectionNum, title: q.section, count: 0 });
+    }
+    m.get(q.section).count++;
+  }
+  return [...m.values()].sort((a, b) => a.subjectCode.localeCompare(b.subjectCode) || a.sectionNum - b.sectionNum);
+})();
+const SUBJECTS = (() => {
+  const m = new Map();
+  for (const q of QUESTIONS) {
+    if (!m.has(q.subjectCode)) m.set(q.subjectCode, { code: q.subjectCode, name: q.subject, count: 0 });
+    m.get(q.subjectCode).count++;
+  }
+  return [...m.values()];
+})();
+
+/* ---------- 儲存 ---------- */
+let lsOK = true;
+function defaultStore() { return { version: 1, progress: {}, session: null, settingsLastUsed: null, updatedAt: null }; }
+function loadStore() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return defaultStore();
+    const s = JSON.parse(raw);
+    if (!s || s.version !== 1) return defaultStore();
+    s.progress = s.progress || {};
+    return s;
+  } catch (e) { lsOK = false; return defaultStore(); }
+}
+function saveStore() {
+  store.updatedAt = new Date().toISOString();
+  try { localStorage.setItem(KEY, JSON.stringify(store)); }
+  catch (e) { lsOK = false; }
+}
+let store = loadStore();
+
+const EMPTY_PROG = { seen: 0, correctCount: 0, wrongCount: 0, consecutiveCorrect: 0, lastResult: null, unsure: false, unsureEver: false, lastAnsweredAt: null };
+function progOf(id) { return store.progress[id] || { ...EMPTY_PROG }; }
+
+/* ---------- 選題 ---------- */
+function priority(p) {
+  return 3 * p.wrongCount
+    + 2 * (p.lastResult === "wrong" ? 1 : 0)
+    + 2 * (p.unsureEver ? 1 : 0)
+    + 1 * (p.seen === 0 ? 1 : 0)
+    - 1 * p.consecutiveCorrect;
+}
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function selectQuestions(s) {
+  let list = QUESTIONS.slice();
+  if (s.scopeMode === "subject") list = list.filter(q => s.subjects.includes(q.subjectCode));
+  else if (s.scopeMode === "section") list = list.filter(q => s.sections.includes(q.section));
+
+  list = list.filter(q => {
+    const p = progOf(q.id);
+    switch (s.source) {
+      case "unseen": return p.seen === 0;
+      case "wrong": return p.wrongCount >= 1;
+      case "unsure": return p.unsureEver;
+      case "wrong_or_unsure": return p.wrongCount >= 1 || p.unsureEver;
+      case "wrongN": return p.wrongCount >= s.wrongN;
+      case "last_wrong": return p.lastResult === "wrong";
+      default: return true;
+    }
+  });
+  if (s.hideMastered) list = list.filter(q => {
+    const p = progOf(q.id);
+    return !(p.consecutiveCorrect >= 2 && !p.unsure);
+  });
+
+  if (s.order === "random") shuffle(list);
+  else if (s.order === "priority") {
+    shuffle(list);
+    list.sort((a, b) => priority(progOf(b.id)) - priority(progOf(a.id)));
+  } else {
+    list.sort((a, b) => a.subjectCode.localeCompare(b.subjectCode) || a.sectionNum - b.sectionNum || a.num - b.num);
+  }
+  if (s.limit > 0) list = list.slice(0, s.limit);
+  return list.map(q => q.id);
+}
+
+/* ---------- 練習流程 ---------- */
+let feedback = null; // {choice, correct} 作答後暫存
+
+function beginQueue(ids, settings) {
+  if (!ids.length) { toast("符合條件的題目是 0 題"); return; }
+  store.session = { queue: ids, pos: 0, answers: [], settings: settings || null, startedAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+  store.settingsLastUsed = settings || store.settingsLastUsed;
+  feedback = null;
+  saveStore();
+  go("practice");
+}
+function currentQ() {
+  const s = store.session;
+  return s && s.pos < s.queue.length ? BANK.get(s.queue[s.pos]) : null;
+}
+let curUnsure = false;
+
+function answer(choice) {
+  const q = currentQ();
+  if (!q || feedback) return;
+  const correct = (choice + 1) === q.answer;
+  const p = { ...EMPTY_PROG, ...progOf(q.id) };
+  p.seen++;
+  if (correct) { p.correctCount++; p.consecutiveCorrect++; p.lastResult = "correct"; }
+  else { p.wrongCount++; p.consecutiveCorrect = 0; p.lastResult = "wrong"; }
+  p.unsure = curUnsure;
+  if (curUnsure) p.unsureEver = true;
+  p.lastAnsweredAt = new Date().toISOString();
+  store.progress[q.id] = p;
+
+  store.session.answers.push({ id: q.id, choice, correct, unsure: curUnsure });
+  store.session.pos++;
+  store.session.updatedAt = new Date().toISOString();
+  feedback = { choice, correct };
+  saveStore();
+  render();
+}
+function nextQ() {
+  feedback = null;
+  const s = store.session;
+  if (!s || s.pos >= s.queue.length) {
+    lastSummary = summarize(s);
+    store.session = null;
+    saveStore();
+    go("result");
+    return;
+  }
+  render();
+}
+function endSession() { saveStore(); go("home"); }
+function summarize(s) {
+  const ans = s ? s.answers : [];
+  return {
+    total: ans.length,
+    correct: ans.filter(a => a.correct).length,
+    wrongIds: ans.filter(a => !a.correct).map(a => a.id),
+  };
+}
+let lastSummary = null;
+
+/* ---------- 畫面 ---------- */
+let screen = "home";
+function go(s) { screen = s; window.scrollTo(0, 0); render(); }
+const app = () => document.getElementById("app");
+function esc(x) { return String(x).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function statHome() {
+  let attempted = 0, correct = 0, reviewPile = 0;
+  for (const q of QUESTIONS) {
+    const p = progOf(q.id);
+    if (p.seen > 0) { attempted++; correct += p.correctCount; }
+    if (p.wrongCount >= 1 || p.unsureEver) reviewPile++;
+  }
+  let totalAnswers = 0, totalCorrect = 0;
+  for (const id in store.progress) { totalAnswers += store.progress[id].seen; totalCorrect += store.progress[id].correctCount; }
+  const acc = totalAnswers ? Math.round(totalCorrect / totalAnswers * 100) : 0;
+  return { attempted, reviewPile, acc, done: attempted, totalQ: QUESTIONS.length };
+}
+
+function renderHome() {
+  const st = statHome();
+  const s = store.session;
+  const resumable = s && s.pos < s.queue.length;
+  const last = store.settingsLastUsed;
+
+  let html = "";
+  if (!lsOK) html += `<div class="banner">此瀏覽器無法儲存進度（可能是無痕模式或封鎖了網站資料）。你仍可練習，但關掉頁面後進度不會保留。</div>`;
+
+  html += `<div class="stack">
+    <div>
+      <h1>職安衛練習題</h1>
+      <p class="muted">共 <span class="tnum">${st.totalQ}</span> 題 · ${SECTIONS.map(x => esc(x.title)).join("、")}</p>
+    </div>`;
+
+  if (resumable) {
+    html += `<div class="card accent stack">
+      <h2>繼續上次練習</h2>
+      <div class="pbar"><i style="width:${Math.round(s.pos / s.queue.length * 100)}%"></i></div>
+      <p class="muted">還在第 <span class="tnum">${s.pos + 1}</span> / <span class="tnum">${s.queue.length}</span> 題</p>
+      <button class="btn primary" id="resume">繼續</button>
+      <button class="btn ghost sm" id="dropSession">放棄這次，重新設定</button>
+    </div>`;
+  }
+
+  html += `<div class="card stack">
+    <h2>${resumable ? "或：開始新練習" : "開始新練習"}</h2>
+    <div class="field">
+      <span class="lbl">範圍</span>
+      <div class="radios" id="scopeRadios">
+        <label><input type="radio" name="scope" value="all" checked> 全部</label>
+        <label><input type="radio" name="scope" value="subject"> 依科目</label>
+        <label><input type="radio" name="scope" value="section"> 依工作項目</label>
+      </div>
+      <div id="scopeBox"></div>
+    </div>
+    <div class="field">
+      <span class="lbl">出題範圍</span>
+      <select id="source">
+        <option value="all">全部題目</option>
+        <option value="unseen">還沒做過的</option>
+        <option value="wrong">答錯過的</option>
+        <option value="unsure">標「沒把握」的</option>
+        <option value="wrong_or_unsure">答錯過 或 沒把握的</option>
+        <option value="wrongN">答錯次數達 N 次以上</option>
+        <option value="last_wrong">上次作答答錯的</option>
+      </select>
+      <div class="field" id="wrongNBox" style="display:none">
+        <select id="wrongN">
+          <option value="1">答錯 ≥ 1 次</option>
+          <option value="2">答錯 ≥ 2 次</option>
+          <option value="3">答錯 ≥ 3 次</option>
+          <option value="4">答錯 ≥ 4 次</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <span class="lbl">出題順序</span>
+      <select id="order">
+        <option value="orig">原順序</option>
+        <option value="random">隨機</option>
+        <option value="priority">錯最多、最不熟的優先</option>
+      </select>
+    </div>
+    <div class="field">
+      <span class="lbl">這次做幾題</span>
+      <select id="limit">
+        <option value="20">20 題</option>
+        <option value="50" selected>50 題</option>
+        <option value="100">100 題</option>
+        <option value="0">全部</option>
+      </select>
+    </div>
+    <label class="optrow"><input type="checkbox" id="hideMastered"> <span>隱藏已連續答對 2 次、且目前沒標沒把握的題</span></label>
+    <button class="btn primary" id="start">開始</button>
+  </div>`;
+
+  html += `<div class="card stack">
+    <h2>我的狀況</h2>
+    <div class="stats">
+      <div class="stat"><b class="tnum">${st.done}</b><span>做過的題</span></div>
+      <div class="stat"><b class="tnum">${st.acc}%</b><span>累積正確率</span></div>
+      <div class="stat"><b class="tnum">${st.reviewPile}</b><span>待複習（錯過/沒把握）</span></div>
+    </div>
+  </div>`;
+
+  html += `<div class="card flat stack">
+    <div class="btn-row">
+      <button class="btn sm" id="expBtn">匯出進度</button>
+      <button class="btn sm" id="impBtn">匯入進度</button>
+    </div>
+    <button class="btn ghost sm" id="clrBtn">清除本機進度</button>
+    <p class="muted">進度只存在這個瀏覽器。要在另一支手機／電腦接續，用「匯出進度」存成檔案，再到另一台「匯入進度」。分享給同事：把這個網址給他，他會有自己獨立的進度。</p>
+  </div>`;
+
+  html += `<details>
+    <summary>複習邏輯怎麼運作</summary>
+    <div class="body">
+      <p>每題會記錄：做過幾次、答錯幾次、連續答對幾次、上次對錯、有沒有標「沒把握」。</p>
+      <p style="margin-top:8px">「錯最多、最不熟的優先」用這個分數由高到低排：<br>
+      <code>3×答錯次數 + 2×(上次答錯) + 2×(曾標沒把握) + 1×(還沒做過) − 1×連續答對次數</code></p>
+      <p style="margin-top:8px">「答錯過的」是<b>只要錯過一次就永遠算</b>，就算後來都對了也叫得出來。<br>
+      「隱藏已精熟」只是暫時把連續答對 2 次以上、且目前沒標沒把握的題從這次練習排除，不會刪紀錄。</p>
+    </div>
+  </details>`;
+
+  html += `</div>`;
+  app().innerHTML = html;
+
+  // wire
+  if (resumable) {
+    document.getElementById("resume").onclick = () => { feedback = null; go("practice"); };
+    document.getElementById("dropSession").onclick = () => {
+      if (confirm("放棄這次練習進度？（各題的作答紀錄會保留）")) { store.session = null; saveStore(); render(); }
+    };
+  }
+  const scopeBox = document.getElementById("scopeBox");
+  function drawScope(mode) {
+    if (mode === "subject") {
+      scopeBox.innerHTML = `<div class="checks" id="subjChecks">${SUBJECTS.map(x =>
+        `<label><input type="checkbox" value="${esc(x.code)}" checked> ${esc(x.name)}（${x.count} 題）</label>`).join("")}</div>`;
+    } else if (mode === "section") {
+      scopeBox.innerHTML = `<div class="checks" id="secChecks">${SECTIONS.map(x =>
+        `<label><input type="checkbox" value="${esc(x.key)}" checked> ${esc(x.title)}（${x.count} 題）</label>`).join("")}</div>`;
+    } else scopeBox.innerHTML = "";
+  }
+  drawScope("all");
+  document.querySelectorAll('input[name="scope"]').forEach(r => r.onchange = () => drawScope(document.querySelector('input[name="scope"]:checked').value));
+
+  const sourceSel = document.getElementById("source");
+  sourceSel.onchange = () => {
+    document.getElementById("wrongNBox").style.display = sourceSel.value === "wrongN" ? "" : "none";
+  };
+  if (last) {
+    if (last.source) { sourceSel.value = last.source; sourceSel.onchange(); }
+    if (last.order) document.getElementById("order").value = last.order;
+    if (last.limit != null) document.getElementById("limit").value = String(last.limit);
+  }
+
+  document.getElementById("start").onclick = () => {
+    const scopeMode = document.querySelector('input[name="scope"]:checked').value;
+    const settings = {
+      scopeMode,
+      subjects: scopeMode === "subject" ? [...document.querySelectorAll("#subjChecks input:checked")].map(i => i.value) : [],
+      sections: scopeMode === "section" ? [...document.querySelectorAll("#secChecks input:checked")].map(i => i.value) : [],
+      source: sourceSel.value,
+      wrongN: parseInt(document.getElementById("wrongN").value, 10) || 1,
+      order: document.getElementById("order").value,
+      limit: parseInt(document.getElementById("limit").value, 10) || 0,
+      hideMastered: document.getElementById("hideMastered").checked,
+    };
+    if (settings.scopeMode === "subject" && !settings.subjects.length) return toast("請至少勾一個科目");
+    if (settings.scopeMode === "section" && !settings.sections.length) return toast("請至少勾一個工作項目");
+    beginQueue(selectQuestions(settings), settings);
+  };
+
+  document.getElementById("expBtn").onclick = exportProgress;
+  document.getElementById("impBtn").onclick = () => document.getElementById("importFile").click();
+  document.getElementById("clrBtn").onclick = () => {
+    if (confirm("清除這個瀏覽器上的所有練習進度？無法復原。")) {
+      store = defaultStore(); saveStore(); toast("已清除"); render();
+    }
+  };
+}
+
+function renderPractice() {
+  const s = store.session;
+  if (!s) return go("home");
+  const q = feedback ? BANK.get(s.queue[s.pos - 1]) : currentQ();
+  if (!q) { lastSummary = summarize(s); store.session = null; saveStore(); return go("result"); }
+
+  const shownIdx = feedback ? s.pos : s.pos + 1;
+  const p = progOf(q.id);
+  if (!feedback) curUnsure = p.unsure === true;
+
+  let html = `<div class="topbar">
+    <button class="btn ghost sm" id="quit" style="width:auto">結束並存檔</button>
+    <span class="grow"></span>
+    <span class="chip">${esc(q.section)}</span>
+  </div>
+  <div class="pbar" style="margin-bottom:14px"><i style="width:${Math.round(shownIdx / s.queue.length * 100)}%"></i></div>
+  <p class="muted tnum" style="margin-bottom:6px">第 ${shownIdx} / ${s.queue.length} 題　·　題庫編號 ${q.num}</p>`;
+
+  html += `<div class="card">
+    <div style="display:flex;justify-content:flex-end">
+      <button class="toggle" id="unsure" aria-pressed="${curUnsure}">⚑ 沒把握</button>
+    </div>
+    <p class="qstem">${esc(q.stem)}</p>
+    <div class="opts">`;
+  for (let i = 0; i < 4; i++) {
+    let cls = "opt";
+    let tag = "";
+    if (feedback) {
+      if (i + 1 === q.answer) { cls += " correct"; tag = `<span class="tag">正解</span>`; }
+      else if (i === feedback.choice) { cls += " wrong"; tag = `<span class="tag">你選的</span>`; }
+    }
+    html += `<button class="${cls}" data-i="${i}" ${feedback ? "disabled" : ""}>
+      <span class="mk">${MK[i]}</span><span>${esc(q.options[i])}</span>${tag}</button>`;
+  }
+  html += `</div>`;
+
+  if (feedback) {
+    const msg = feedback.correct
+      ? `<span class="chip good">✓ 答對</span>`
+      : `<span class="chip bad">✗ 答錯</span>`;
+    const uns = curUnsure ? ` <span class="chip warn">已標沒把握</span>` : "";
+    const done = s.pos >= s.queue.length;
+    html += `<div style="margin-top:16px;display:flex;align-items:center;gap:8px">${msg}${uns}</div>
+      <button class="btn primary" id="next" style="margin-top:14px">${done ? "完成，看結果" : "下一題"}</button>`;
+  }
+  html += `</div>`;
+  app().innerHTML = html;
+
+  document.getElementById("quit").onclick = endSession;
+  const ub = document.getElementById("unsure");
+  ub.onclick = () => {
+    curUnsure = ub.getAttribute("aria-pressed") !== "true";
+    ub.setAttribute("aria-pressed", String(curUnsure));
+    if (feedback && store.progress[q.id]) {
+      store.progress[q.id].unsure = curUnsure;
+      if (curUnsure) store.progress[q.id].unsureEver = true;
+      saveStore();
+    }
+  };
+  if (feedback) {
+    const nb = document.getElementById("next");
+    nb.onclick = nextQ;
+    nb.focus();
+  } else {
+    app().querySelectorAll(".opt").forEach(b => b.onclick = () => answer(parseInt(b.dataset.i, 10)));
+  }
+}
+
+function renderResult() {
+  const r = lastSummary || { total: 0, correct: 0, wrongIds: [] };
+  const acc = r.total ? Math.round(r.correct / r.total * 100) : 0;
+  let html = `<div class="stack">
+    <h1>這次練習結果</h1>
+    <div class="stats">
+      <div class="stat"><b class="tnum">${r.total}</b><span>作答題數</span></div>
+      <div class="stat"><b class="tnum">${r.correct}</b><span>答對</span></div>
+      <div class="stat"><b class="tnum">${acc}%</b><span>正確率</span></div>
+    </div>`;
+
+  if (r.wrongIds.length) {
+    html += `<div class="card stack">
+      <h2>這次答錯的 ${r.wrongIds.length} 題</h2>
+      <div class="wronglist">${r.wrongIds.map(id => {
+        const q = BANK.get(id);
+        return `<div class="wrongitem"><div class="meta">${esc(q.section)} · 題庫編號 ${q.num}</div>${esc(q.stem)}</div>`;
+      }).join("")}</div>
+      <button class="btn primary" id="reviewWrong">立即複習這 ${r.wrongIds.length} 題</button>
+    </div>`;
+  } else {
+    html += `<div class="card"><p>全部答對，讚。</p></div>`;
+  }
+  html += `<button class="btn" id="backHome">回首頁</button></div>`;
+  app().innerHTML = html;
+
+  if (r.wrongIds.length) document.getElementById("reviewWrong").onclick = () => beginQueue(r.wrongIds.slice(), store.settingsLastUsed);
+  document.getElementById("backHome").onclick = () => go("home");
+}
+
+function render() {
+  if (screen === "practice") renderPractice();
+  else if (screen === "result") renderResult();
+  else renderHome();
+}
+
+/* ---------- 匯出／匯入 ---------- */
+function todayStr() { return new Date().toISOString().slice(0, 10).replace(/-/g, ""); }
+async function exportProgress() {
+  const data = JSON.stringify(store, null, 2);
+  const filename = `exam-progress-${todayStr()}.json`;
+  const c = (typeof claude !== "undefined") ? claude : (typeof window !== "undefined" ? window.claude : undefined);
+  if (c && typeof c.use === "function") {
+    try {
+      const dl = await c.use("downloads");
+      if (dl) { await dl.save({ filename, data }); toast("已匯出"); return; }
+    } catch (e) {
+      if (e && e.code === "declined") return;
+      // 其他錯誤 -> 走 fallback
+    }
+  }
+  showExportFallback(data, filename);
+}
+function showExportFallback(data, filename) {
+  const html = `<div class="stack">
+    <h1>匯出進度</h1>
+    <p class="muted">這個環境無法直接下載檔案。請全選下面的文字，貼進一個檔案存成 <code>${esc(filename)}</code>（副檔名 .json）。</p>
+    <textarea readonly id="expText">${esc(data)}</textarea>
+    <button class="btn" id="copyExp">全選並複製</button>
+    <button class="btn ghost" id="backHome2">回首頁</button>
+  </div>`;
+  app().innerHTML = html;
+  document.getElementById("copyExp").onclick = async () => {
+    const t = document.getElementById("expText");
+    t.select();
+    try { await navigator.clipboard.writeText(data); toast("已複製"); }
+    catch (e) { document.execCommand("copy"); toast("已複製"); }
+  };
+  document.getElementById("backHome2").onclick = () => go("home");
+}
+function mergeProgress(incoming) {
+  const inc = (incoming && incoming.progress) || {};
+  for (const id in inc) {
+    const b = inc[id];
+    const a = store.progress[id];
+    if (!a) { store.progress[id] = { ...EMPTY_PROG, ...b }; continue; }
+    const bNewer = (b.lastAnsweredAt || "") > (a.lastAnsweredAt || "");
+    store.progress[id] = {
+      seen: Math.max(a.seen || 0, b.seen || 0),
+      correctCount: Math.max(a.correctCount || 0, b.correctCount || 0),
+      wrongCount: Math.max(a.wrongCount || 0, b.wrongCount || 0),
+      consecutiveCorrect: bNewer ? (b.consecutiveCorrect || 0) : (a.consecutiveCorrect || 0),
+      lastResult: bNewer ? b.lastResult : a.lastResult,
+      unsure: bNewer ? !!b.unsure : !!a.unsure,
+      unsureEver: !!a.unsureEver || !!b.unsureEver,
+      lastAnsweredAt: bNewer ? b.lastAnsweredAt : a.lastAnsweredAt,
+    };
+  }
+}
+document.getElementById("importFile").addEventListener("change", (ev) => {
+  const f = ev.target.files && ev.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsed;
+    try { parsed = JSON.parse(reader.result); }
+    catch (e) { toast("檔案格式不對，不是有效的 JSON"); return; }
+    if (!parsed || typeof parsed !== "object" || !parsed.progress) { toast("這個檔案裡沒有進度資料"); return; }
+    const n = Object.keys(parsed.progress).length;
+    const replace = confirm(`匯入 ${n} 題的紀錄。\n\n按「確定」＝與現有進度合併（各項取較高值）\n按「取消」＝改為完全覆蓋現有進度`);
+    if (replace) mergeProgress(parsed);
+    else { parsed.session = store.session; store = { ...defaultStore(), ...parsed, progress: parsed.progress }; }
+    saveStore();
+    toast("已匯入");
+    go("home");
+  };
+  reader.readAsText(f);
+  ev.target.value = "";
+});
+
+/* ---------- toast ---------- */
+let toastT = null;
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove("show"), 2200);
+}
+
+/* ---------- 啟動 ---------- */
+render();
+</script>
