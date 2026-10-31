@@ -728,6 +728,17 @@ async function exportProgress() {
       if (e && e.code === "declined") return;
       // 其他錯誤 -> 走 fallback
     }
+  } else {
+    // 一般瀏覽器（GitHub Pages、手機）：用 Blob 直接下載
+    try {
+      const url = URL.createObjectURL(new Blob([data], { type: "application/json" }));
+      const a = document.createElement("a");
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      toast("已下載 " + filename);
+      return;
+    } catch (e) { /* 走 fallback */ }
   }
   showExportFallback(data, filename);
 }
